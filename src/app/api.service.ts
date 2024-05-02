@@ -9,18 +9,9 @@ import { HttpClient, HttpHeaders } from "@angular/common/http";
 export class ApiService {
   private readonly apiUrl = 'https://api4.allhours.com';
   private readonly tokenUrl = 'https://login.allhours.com/connect/token';
-  protected readonly localStorage: Storage = localStorage;
   accessToken: string = '';
 
   constructor(private http: HttpClient) {}
-
-  getClientId(): string {
-    return localStorage.getItem('client_id') ?? '';
-  }
-
-  getClientSecret(): string {
-    return localStorage.getItem('client_secret') ?? '';
-  }
 
   setCredentials(client_id: string, client_secret: string): void {
     localStorage.setItem('client_id', client_id);

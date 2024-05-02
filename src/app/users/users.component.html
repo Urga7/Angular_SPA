@@ -1,20 +1,24 @@
+<div class="search-input">
+  <input type="text" placeholder="Search by First Name" (input)="search('FirstName', nameQuery)" [(ngModel)]="nameQuery">
+  <input type="text" placeholder="Search by Last Name" (input)="search('LastName', surnameQuery)" [(ngModel)]="surnameQuery">
+</div>
 <div class="users-container">
   <table>
     <thead>
-      <tr>
-        <th>First name</th>
-        <th>Last name</th>
-        <th>Birth date</th>
-        <th>Email</th>
-      </tr>
+    <tr>
+      <th>First name</th>
+      <th>Last name</th>
+      <th>Birth date</th>
+      <th>Email</th>
+    </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let user of users">
-        <td>{{ user.FirstName }}</td>
-        <td>{{ user.LastName }}</td>
-        <td>{{ user.BirthDate }}</td>
-        <td>{{ user.Email }}</td>
-      </tr>
+    <tr *ngFor="let user of filteredUsers">
+      <td>{{ user.FirstName }}</td>
+      <td>{{ user.LastName }}</td>
+      <td>{{ user.BirthDate }}</td>
+      <td>{{ user.Email }}</td>
+    </tr>
     </tbody>
   </table>
 </div>
