@@ -1,5 +1,16 @@
+.search-input {
+  margin: 40px;
+  display: flex;
+  justify-content: center;
+  input {
+    padding: 10px;
+    margin: 5px;
+    outline: none;
+  }
+}
+
 .users-container {
-  margin: 80px;
+  margin: 40px;
   display: flex;
   justify-content: center;
 
