@@ -1,0 +1,22 @@
+.users-container {
+  margin: 80px;
+  display: flex;
+  justify-content: center;
+
+  table {
+    border-collapse: collapse;
+    thead {
+      tr {
+        border-bottom: 1px solid black;
+      }
+    }
+    tbody {
+      tr {
+        border-bottom: 1px solid lightgray;
+        td {
+          padding: 0 10px;
+        }
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
-import { Component, inject, OnInit, NgModule } from '@angular/core';
-import { ApiService } from "../api.service";
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from "@angular/common";
+import { UsersDataService } from "../users-data.service";
 
 @Component({
   selector: 'app-users',
@@ -11,17 +11,10 @@ import { CommonModule } from "@angular/common";
 })
 export class UsersComponent implements OnInit {
   public users: any;
-  private apiService = inject(ApiService);
+
+  constructor(private usersService: UsersDataService) {}
 
   ngOnInit(): void {
-    this.apiService.fetchDataFromApi('api/v1/Users').subscribe(
-      (data: any[]) => {
-        this.users = data;
-        console.log(this.users);
-      },
-      (error) => {
-        console.error('Error fetching users:', error);
-      }
-    );
+    this.users = this.usersService.getUsers();
   }
 }
