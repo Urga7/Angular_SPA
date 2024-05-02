@@ -1,1 +1,9 @@
-<p>settings works!</p>
+<div>
+  <label for="client_id">Client ID:</label>
+  <input type="text" id="client_id" [(ngModel)]="client_id">
+</div>
+<div>
+  <label for="client_secret">Client Secret:</label>
+  <input type="password" id="client_secret" [(ngModel)]="client_secret">
+</div>
+<button (click)="saveCredentials()">Save Credentials</button>
