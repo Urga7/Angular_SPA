@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from "@angular/common";
-import { FormsModule } from "@angular/forms";
+import { ReactiveFormsModule, FormGroup, FormsModule, FormControl} from "@angular/forms";
 import { ApiService } from "../api.service";
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
 })
@@ -16,6 +16,17 @@ export class UsersComponent implements OnInit {
   public filteredUsers: any;
   public nameQuery: string = '';
   public surnameQuery: string = '';
+  public userFormActive: boolean = false;
+  successMessage: string = '';
+  errorMessage: string = '';
+  infoMessage: string = '';
+
+  userForm = new FormGroup({
+    name: new FormControl(''),
+    surname: new FormControl(''),
+    birthday: new FormControl(''),
+    email: new FormControl(''),
+  })
 
   constructor(private apiService: ApiService) {}
 
@@ -34,6 +45,13 @@ export class UsersComponent implements OnInit {
     });
   }
 
+  hideForm(): void {
+    this.userFormActive = false;
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.infoMessage = '';
+  }
+
   fetchData(): void {
     this.apiService.setAccessToken().then(() => {
       if (this.apiService.accessToken) {
@@ -49,6 +67,43 @@ export class UsersComponent implements OnInit {
       }
     }).catch(error => {
       console.error('Error setting access token:', error);
+    });
+  }
+
+  addUserHandler(): void {
+    if(!this.userForm.value.name || !this.userForm.value.surname) {
+      this.errorMessage = 'First name and last name are mandatory fields.';
+      this.successMessage = '';
+      return;
+    }
+
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.infoMessage = 'Adding user...';
+    this.addUser();
+  }
+
+  addUser(): void {
+    const newUser: any = {
+      FirstName: this.userForm.value.name,
+      LastName: this.userForm.value.surname,
+      BirthDate: this.userForm.value.birthday,
+      Email: this.userForm.value.email,
+    };
+
+    this.apiService.setAccessToken().then(() => {
+      this.apiService.postDataToApi('api/v1/Users', newUser).subscribe((data: any) => {
+        this.successMessage = 'User ' + data.FirstName + ' ' + data.LastName + ' has been added.';
+        this.errorMessage = '';
+        this.infoMessage = '';
+        this.fetchData();
+        this.userForm.reset();
+      }, error => {
+        this.errorMessage = 'Error adding user. Please try again.';
+        this.successMessage = '';
+        this.infoMessage = '';
+        console.log(error);
+      });
     });
   }
 }

@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from "@angular/forms";
 import { ApiService } from "../api.service";
-import { NgIf } from "@angular/common";
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [FormsModule, NgIf],
+  imports: [FormsModule],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css'
 })

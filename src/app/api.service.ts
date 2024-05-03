@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { Data } from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
@@ -44,5 +45,14 @@ export class ApiService {
     });
 
     return this.http.get<any>(`${this.apiUrl}/${endpoint}`, { headers });
+  }
+
+  postDataToApi(endpoint: string, data: Data): Observable<any> {
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${this.accessToken}`,
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<any>(`${this.apiUrl}/${endpoint}`, data, { headers });
   }
 }

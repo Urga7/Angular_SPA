@@ -2,23 +2,92 @@
   <input type="text" placeholder="Search by First Name" (input)="search('FirstName', nameQuery)" [(ngModel)]="nameQuery">
   <input type="text" placeholder="Search by Last Name" (input)="search('LastName', surnameQuery)" [(ngModel)]="surnameQuery">
 </div>
-<div class="users-container">
-  <table>
-    <thead>
-    <tr>
-      <th>First name</th>
-      <th>Last name</th>
-      <th>Birth date</th>
-      <th>Email</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr *ngFor="let user of filteredUsers">
-      <td>{{ user.FirstName }}</td>
-      <td>{{ user.LastName }}</td>
-      <td>{{ user.BirthDate }}</td>
-      <td>{{ user.Email }}</td>
-    </tr>
-    </tbody>
-  </table>
-</div>
+
+@if(!userFormActive) {
+  <div class="button-container">
+    <button (click)="this.userFormActive = true">Add new user</button>
+  </div>
+}
+
+@if(userFormActive) {
+  <div class="add-user-container">
+    <form [formGroup]="userForm" (ngSubmit)="addUserHandler()">
+      <label>
+        First name:
+        <input type="text" placeholder="Mark" formControlName="name" />
+      </label>
+      <label>
+        Last name:
+        <input type="text" placeholder="Watson" formControlName="surname" />
+      </label>
+      <label>
+        Birth date:
+        <input type="date" formControlName="birthday" />
+      </label>
+      <label>
+        Email:
+        <input type="email" placeholder="mark.watson@email.com" formControlName="email" />
+      </label>
+      <div class="button-container">
+        <button (click)="hideForm()">Cancel</button>
+        <button type="submit">Add</button>
+      </div>
+      @if(successMessage) {
+        <p class="success-msg">
+          {{ successMessage }}
+        </p>
+      }
+      @if(errorMessage) {
+        <p class="error-msg">
+          {{ errorMessage }}
+        </p>
+      }
+      @if(infoMessage) {
+        <p>
+          {{ infoMessage }}
+        </p>
+      }
+    </form>
+  </div>
+}
+
+@if(filteredUsers.length > 0) {
+  <div class="users-container">
+    <table>
+      <thead>
+      <tr>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Birth date</th>
+        <th>Email</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for(user of filteredUsers; track user.Id) {
+          <tr>
+            <td>{{ user.FirstName }}</td>
+            <td>{{ user.LastName }}</td>
+            <td>{{ user.BirthDate }}</td>
+            <td>{{ user.Email }}</td>
+          </tr>
+        }
+    </table>
+  </div>
+}
+
+@if(users.length == 0) {
+  <div class="info-container">
+    <p>
+      No users found.
+    </p>
+  </div>
+}
+
+@if(users.length > 0 && filteredUsers.length == 0) {
+  <div class="info-container">
+    <p>
+      No users match search criteria.
+    </p>
+  </div>
+}
+
