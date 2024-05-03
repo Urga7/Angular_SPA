@@ -67,9 +67,26 @@
           <tr>
             <td>{{ user.FirstName }}</td>
             <td>{{ user.LastName }}</td>
-            <td>{{ user.BirthDate }}</td>
+            <td>{{ user.BirthDate | date: 'dd/MM/yyyy' }}</td>
             <td>{{ user.Email }}</td>
+            <td>
+              <a (click)="user.absenceFormActive = !user.absenceFormActive">✚</a>
+            </td>
           </tr>
+          @if(user.absenceFormActive) {
+            <tr class="absence-form">
+              <label>
+                Select type of absence
+                <select>
+                  @for(absDef of absencesDefinitions; track absencesDefinitions.Id) {
+                    <option>
+                      {{ absDef.Name }}
+                    </option>
+                  }
+                </select>
+              </label>
+            </tr>
+          }
         }
     </table>
   </div>

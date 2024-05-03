@@ -25,6 +25,12 @@ button {
   }
 }
 
+select {
+  padding: 8px;
+  margin: 5px;
+  outline: none;
+}
+
 input {
   padding: 10px;
   margin: 5px;

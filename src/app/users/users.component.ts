@@ -12,14 +12,15 @@ import { ApiService } from "../api.service";
 })
 
 export class UsersComponent implements OnInit {
-  public users: any;
-  public filteredUsers: any;
-  public nameQuery: string = '';
-  public surnameQuery: string = '';
-  public userFormActive: boolean = false;
+  users: any = [];
+  filteredUsers: any = [];
+  nameQuery: string = '';
+  surnameQuery: string = '';
+  userFormActive: boolean = false;
   successMessage: string = '';
   errorMessage: string = '';
   infoMessage: string = '';
+  absencesDefinitions: any;
 
   userForm = new FormGroup({
     name: new FormControl(''),
@@ -31,18 +32,35 @@ export class UsersComponent implements OnInit {
   constructor(private apiService: ApiService) {}
 
   ngOnInit(): void {
-    if(localStorage.getItem('users') == 'undefined') {
-      this.fetchData();
-    } else {
+    this.getUsers();
+    this.getAbsenceDefinitions();
+  }
+
+  getUsers(): void {
+    console.log(localStorage.getItem('users'));
+    if(localStorage.getItem('users') == 'undefined' || localStorage.getItem('users') == null)
+      this.getData('api/v1/Users', this.users, 'users');
+    else
       this.users = JSON.parse(localStorage.getItem('users') ?? '');
-      this.filteredUsers = this.users;
-    }
+
+    this.filteredUsers = this.users;
+  }
+
+  getAbsenceDefinitions(): void {
+    if(localStorage.getItem('absencesDefinitions') == 'undefined' || localStorage.getItem('absencesDefinitions') == null)
+      this.getData('/api/v1/AbsenceDefinitions', this.absencesDefinitions, 'absencesDefinitions');
+    else
+      this.absencesDefinitions = JSON.parse(localStorage.getItem('absencesDefinitions') ?? '');
   }
 
   search(column: string, query: string): void {
     this.filteredUsers = this.users.filter((user: any) => {
       return user[column].toLowerCase().includes(query.toLowerCase());
     });
+  }
+
+  addAbsence(): void {
+
   }
 
   hideForm(): void {
@@ -52,13 +70,13 @@ export class UsersComponent implements OnInit {
     this.infoMessage = '';
   }
 
-  fetchData(): void {
+  getData(endpoint: string, attribute: any, storageKey: string): void {
     this.apiService.setAccessToken().then(() => {
       if (this.apiService.accessToken) {
-        this.apiService.fetchDataFromApi('api/v1/Users').subscribe((data: any[]) => {
-          this.users = data;
-          this.filteredUsers = data;
-          localStorage.setItem('users', JSON.stringify(data));
+        this.apiService.fetchDataFromApi(endpoint).subscribe((data: any[]) => {
+          console.log(data);
+          attribute = data;
+          localStorage.setItem(storageKey, JSON.stringify(data));
         }, (error) => {
           console.error('Error fetching users:', error);
         });
@@ -96,7 +114,7 @@ export class UsersComponent implements OnInit {
         this.successMessage = 'User ' + data.FirstName + ' ' + data.LastName + ' has been added.';
         this.errorMessage = '';
         this.infoMessage = '';
-        this.fetchData();
+        this.getData('api/v1/Users', this.users, 'users');
         this.userForm.reset();
       }, error => {
         this.errorMessage = 'Error adding user. Please try again.';
