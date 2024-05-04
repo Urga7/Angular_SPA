@@ -21,6 +21,8 @@ export class UsersComponent implements OnInit {
   errorMessage: string = '';
   infoMessage: string = '';
   absencesDefinitions: any;
+  fetchingUsers: boolean = false;
+  fetchingAbsencesDefinitions: boolean = false;
 
   userForm = new FormGroup({
     name: new FormControl(''),
@@ -31,26 +33,51 @@ export class UsersComponent implements OnInit {
 
   constructor(private apiService: ApiService) {}
 
-  ngOnInit(): void {
-    this.getUsers();
-    this.getAbsenceDefinitions();
+  async ngOnInit(): Promise<void> {
+    try {
+      this.fetchingUsers = true;
+      this.users = await this.getUsers();
+      localStorage.setItem('users', JSON.stringify(this.users));
+      this.filteredUsers = this.users;
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    } finally {
+      this.fetchingUsers = false;
+    }
+
+    try {
+      this.fetchingAbsencesDefinitions = true;
+      this.absencesDefinitions = await this.getAbsencesDefinitions();
+      localStorage.setItem('absencesDefinitions', JSON.stringify(this.absencesDefinitions));
+    } catch (error) {
+      console.error('Error fetching absence definitions:', error);
+    } finally {
+      this.fetchingAbsencesDefinitions = false;
+    }
   }
 
-  getUsers(): void {
-    console.log(localStorage.getItem('users'));
-    if(localStorage.getItem('users') == 'undefined' || localStorage.getItem('users') == null)
-      this.getData('api/v1/Users', this.users, 'users');
-    else
-      this.users = JSON.parse(localStorage.getItem('users') ?? '');
-
-    this.filteredUsers = this.users;
+  async getUsers(): Promise<any> {
+    try {
+      if (localStorage.getItem('users') == 'undefined' || localStorage.getItem('users') == null) {
+        return this.getData('api/v1/Users');
+      } else {
+        return JSON.parse(localStorage.getItem('users') ?? '');
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
   }
 
-  getAbsenceDefinitions(): void {
-    if(localStorage.getItem('absencesDefinitions') == 'undefined' || localStorage.getItem('absencesDefinitions') == null)
-      this.getData('/api/v1/AbsenceDefinitions', this.absencesDefinitions, 'absencesDefinitions');
-    else
-      this.absencesDefinitions = JSON.parse(localStorage.getItem('absencesDefinitions') ?? '');
+  async getAbsencesDefinitions(): Promise<any> {
+    try {
+      if (localStorage.getItem('absencesDefinitions') == 'undefined' || localStorage.getItem('absencesDefinitions') == null) {
+        return this.getData('/api/v1/AbsenceDefinitions');
+      } else {
+        return this.absencesDefinitions = JSON.parse(localStorage.getItem('absencesDefinitions') ?? '');
+      }
+    } catch (error) {
+      console.error('Error fetching absence definitions:', error);
+    }
   }
 
   search(column: string, query: string): void {
@@ -70,22 +97,17 @@ export class UsersComponent implements OnInit {
     this.infoMessage = '';
   }
 
-  getData(endpoint: string, attribute: any, storageKey: string): void {
-    this.apiService.setAccessToken().then(() => {
+  async getData(endpoint: string): Promise<any> {
+    try {
+      await this.apiService.setAccessToken();
       if (this.apiService.accessToken) {
-        this.apiService.fetchDataFromApi(endpoint).subscribe((data: any[]) => {
-          console.log(data);
-          attribute = data;
-          localStorage.setItem(storageKey, JSON.stringify(data));
-        }, (error) => {
-          console.error('Error fetching users:', error);
-        });
+        return this.apiService.fetchDataFromApi(endpoint).toPromise();
       } else {
         console.error('Access token is not set.');
       }
-    }).catch(error => {
-      console.error('Error setting access token:', error);
-    });
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
   }
 
   addUserHandler(): void {
@@ -114,7 +136,7 @@ export class UsersComponent implements OnInit {
         this.successMessage = 'User ' + data.FirstName + ' ' + data.LastName + ' has been added.';
         this.errorMessage = '';
         this.infoMessage = '';
-        this.getData('api/v1/Users', this.users, 'users');
+        this.users = this.getData('api/v1/Users');
         this.userForm.reset();
       }, error => {
         this.errorMessage = 'Error adding user. Please try again.';

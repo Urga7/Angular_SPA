@@ -51,60 +51,70 @@
   </div>
 }
 
-@if(filteredUsers.length > 0) {
-  <div class="users-container">
-    <table>
-      <thead>
-      <tr>
-        <th>First name</th>
-        <th>Last name</th>
-        <th>Birth date</th>
-        <th>Email</th>
-      </tr>
-      </thead>
-      <tbody>
-        @for(user of filteredUsers; track user.Id) {
-          <tr>
-            <td>{{ user.FirstName }}</td>
-            <td>{{ user.LastName }}</td>
-            <td>{{ user.BirthDate | date: 'dd/MM/yyyy' }}</td>
-            <td>{{ user.Email }}</td>
-            <td>
-              <a (click)="user.absenceFormActive = !user.absenceFormActive">✚</a>
-            </td>
-          </tr>
-          @if(user.absenceFormActive) {
-            <tr class="absence-form">
-              <label>
-                Select type of absence
-                <select>
-                  @for(absDef of absencesDefinitions; track absencesDefinitions.Id) {
-                    <option>
-                      {{ absDef.Name }}
-                    </option>
-                  }
-                </select>
-              </label>
+@if(fetchingUsers || fetchingAbsencesDefinitions) {
+  <div class="info-container">
+    <p>
+      Fetching users...
+    </p>
+  </div>
+}
+
+@if(!fetchingUsers && !fetchingAbsencesDefinitions) {
+  @if(filteredUsers.length > 0) {
+    <div class="users-container">
+      <table>
+        <thead>
+        <tr>
+          <th>First name</th>
+          <th>Last name</th>
+          <th>Birth date</th>
+          <th>Email</th>
+        </tr>
+        </thead>
+        <tbody>
+          @for(user of filteredUsers; track user.Id) {
+            <tr>
+              <td>{{ user.FirstName }}</td>
+              <td>{{ user.LastName }}</td>
+              <td>{{ user.BirthDate | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ user.Email }}</td>
+              <td>
+                <a (click)="user.absenceFormActive = !user.absenceFormActive">✚</a>
+              </td>
             </tr>
+            @if(user.absenceFormActive) {
+              <tr class="absence-form">
+                <label>
+                  Select type of absence
+                  <select>
+                    @for(absDef of absencesDefinitions; track absencesDefinitions.Id) {
+                      <option>
+                        {{ absDef.Name }}
+                      </option>
+                    }
+                  </select>
+                </label>
+              </tr>
+            }
           }
-        }
-    </table>
-  </div>
-}
+      </table>
+    </div>
+  }
 
-@if(users.length == 0) {
-  <div class="info-container">
-    <p>
-      No users found.
-    </p>
-  </div>
-}
+  @if(users.length == 0) {
+    <div class="info-container">
+      <p>
+        No users found.
+      </p>
+    </div>
+  }
 
-@if(users.length > 0 && filteredUsers.length == 0) {
-  <div class="info-container">
-    <p>
-      No users match search criteria.
-    </p>
-  </div>
+  @if(users.length > 0 && filteredUsers.length == 0) {
+    <div class="info-container">
+      <p>
+        No users match search criteria.
+      </p>
+    </div>
+  }
 }
 

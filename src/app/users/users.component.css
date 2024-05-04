@@ -87,9 +87,6 @@
       }
 
       .absence-form {
-        /*display: flex;*/
-        /*justify-content: space-evenly;*/
-        /*align-items: center;*/
         label {
           display: flex;
           justify-content: space-evenly;

@@ -19,23 +19,23 @@ export class ApiService {
     localStorage.setItem('client_secret', client_secret);
   }
 
-  setAccessToken(): Promise<void> {
+  async setAccessToken(): Promise<void> {
     const body = new URLSearchParams();
     body.set('grant_type', 'client_credentials');
     body.set('client_id', localStorage.getItem('client_id') ?? '');
     body.set('client_secret', localStorage.getItem('client_secret') ?? '');
     body.set('scope', 'api');
 
-    return this.http.post<any>(this.tokenUrl, body.toString(), {
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    }).toPromise().then(response => {
+    try {
+      const response = await this.http.post<any>(this.tokenUrl, body.toString(), {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      }).toPromise();
+
       this.accessToken = response.access_token;
-    }).catch(error => {
-      console.log("Error setting access token: ", error);
+    } catch(error) {
+      console.error("Error setting access token: ", error);
       throw error;
-    });
+    }
   }
 
   fetchDataFromApi(endpoint: string): Observable<any> {
