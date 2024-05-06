@@ -86,11 +86,20 @@
         background-color: #f6f6f6;
       }
 
-      .absence-form {
-        label {
+      .add-absence-container {
+        form {
           display: flex;
-          justify-content: space-evenly;
-          align-items: center;
+          justify-content: space-between;
+          label {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-right: 30px;
+          }
+          button {
+            padding: 4px;
+            margin: 6px;
+          }
         }
       }
     }

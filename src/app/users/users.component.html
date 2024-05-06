@@ -32,19 +32,19 @@
         <button (click)="hideForm()">Cancel</button>
         <button type="submit">Add</button>
       </div>
-      @if(successMessage) {
+      @if(userSuccessMessage) {
         <p class="success-msg">
-          {{ successMessage }}
+          {{ userSuccessMessage }}
         </p>
       }
-      @if(errorMessage) {
+      @if(userErrorMessage) {
         <p class="error-msg">
-          {{ errorMessage }}
+          {{ userErrorMessage }}
         </p>
       }
-      @if(infoMessage) {
+      @if(userInfoMessage) {
         <p>
-          {{ infoMessage }}
+          {{ userInfoMessage }}
         </p>
       }
     </form>
@@ -83,17 +83,32 @@
               </td>
             </tr>
             @if(user.absenceFormActive) {
-              <tr class="absence-form">
-                <label>
-                  Select type of absence
-                  <select>
-                    @for(absDef of absencesDefinitions; track absencesDefinitions.Id) {
-                      <option>
-                        {{ absDef.Name }}
-                      </option>
-                    }
-                  </select>
-                </label>
+              <tr>
+                <td colspan="5" class="add-absence-container">
+                  <form [formGroup]="absenceForm" (ngSubmit)="addAbsenceHandler(user.Id)">
+                    <label>
+                      Select type of absence
+                      <select formControlName="absenceId">
+                        @for(absDef of absenceDefinitions; track absenceDefinitions.Id) {
+                          <option [value]="absDef.Id">
+                            {{ absDef.Name }}
+                          </option>
+                        }
+                      </select>
+                    </label>
+                    <label>
+                      Select absence start
+                      <input type="date" formControlName="startDate" />
+                    </label>
+                    <label>
+                      Select absence end
+                      <input type="date" formControlName="endDate" />
+                    </label>
+                    <button type="submit">
+                      Add absence
+                    </button>
+                  </form>
+                </td>
               </tr>
             }
           }

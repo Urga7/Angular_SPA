@@ -17,10 +17,16 @@ export class UsersComponent implements OnInit {
   nameQuery: string = '';
   surnameQuery: string = '';
   userFormActive: boolean = false;
-  successMessage: string = '';
-  errorMessage: string = '';
-  infoMessage: string = '';
-  absencesDefinitions: any;
+
+  userSuccessMessage: string = '';
+  userErrorMessage: string = '';
+  userInfoMessage: string = '';
+
+  absenceSuccessMessage: string = '';
+  absenceErrorMessage: string = '';
+  absenceInfoMessage: string = '';
+
+  absenceDefinitions: any;
   fetchingUsers: boolean = false;
   fetchingAbsencesDefinitions: boolean = false;
 
@@ -29,6 +35,12 @@ export class UsersComponent implements OnInit {
     surname: new FormControl(''),
     birthday: new FormControl(''),
     email: new FormControl(''),
+  });
+
+  absenceForm = new FormGroup({
+    absenceId: new FormControl(''),
+    startDate: new FormControl(''),
+    endDate: new FormControl(''),
   })
 
   constructor(private apiService: ApiService) {}
@@ -37,7 +49,6 @@ export class UsersComponent implements OnInit {
     try {
       this.fetchingUsers = true;
       this.users = await this.getUsers();
-      localStorage.setItem('users', JSON.stringify(this.users));
       this.filteredUsers = this.users;
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -47,8 +58,7 @@ export class UsersComponent implements OnInit {
 
     try {
       this.fetchingAbsencesDefinitions = true;
-      this.absencesDefinitions = await this.getAbsencesDefinitions();
-      localStorage.setItem('absencesDefinitions', JSON.stringify(this.absencesDefinitions));
+      this.absenceDefinitions = await this.getAbsenceDefinitions();
     } catch (error) {
       console.error('Error fetching absence definitions:', error);
     } finally {
@@ -59,22 +69,24 @@ export class UsersComponent implements OnInit {
   async getUsers(): Promise<any> {
     try {
       if (localStorage.getItem('users') == 'undefined' || localStorage.getItem('users') == null) {
-        return this.getData('api/v1/Users');
-      } else {
-        return JSON.parse(localStorage.getItem('users') ?? '');
+        const userData = await this.getData('api/v1/Users');
+        localStorage.setItem('users', JSON.stringify(userData));
       }
+
+      return JSON.parse(localStorage.getItem('users') ?? '');
     } catch (error) {
       console.error('Error fetching users:', error);
     }
   }
 
-  async getAbsencesDefinitions(): Promise<any> {
+  async getAbsenceDefinitions(): Promise<any> {
     try {
-      if (localStorage.getItem('absencesDefinitions') == 'undefined' || localStorage.getItem('absencesDefinitions') == null) {
-        return this.getData('/api/v1/AbsenceDefinitions');
-      } else {
-        return this.absencesDefinitions = JSON.parse(localStorage.getItem('absencesDefinitions') ?? '');
+      if (localStorage.getItem('absenceDefinitions') == 'undefined' || localStorage.getItem('absenceDefinitions') == null) {
+        const absences = await this.getData('api/v1/AbsenceDefinitions');
+        localStorage.setItem('absenceDefinitions', JSON.stringify(absences));
       }
+
+      return JSON.parse(localStorage.getItem('absenceDefinitions') ?? '');
     } catch (error) {
       console.error('Error fetching absence definitions:', error);
     }
@@ -86,15 +98,11 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  addAbsence(): void {
-
-  }
-
   hideForm(): void {
     this.userFormActive = false;
-    this.errorMessage = '';
-    this.successMessage = '';
-    this.infoMessage = '';
+    this.userErrorMessage = '';
+    this.userSuccessMessage = '';
+    this.userInfoMessage = '';
   }
 
   async getData(endpoint: string): Promise<any> {
@@ -110,16 +118,62 @@ export class UsersComponent implements OnInit {
     }
   }
 
+  addAbsenceHandler(userId: string): void {
+    this.addAbsence(userId);
+  }
+
+  addAbsence(userId: string): void {
+    console.log("Gonna add absence..")
+    const startDateValue = this.absenceForm.value.startDate;
+    const endDateValue = this.absenceForm.value.endDate;
+    let newAbsence: any;
+
+    if (startDateValue && endDateValue) {
+      console.log("Inside IF")
+      const startDateParts = startDateValue.split('/');
+      const endDateParts = endDateValue.split('/');
+
+      const startDate = new Date(`${startDateParts[2]}-${startDateParts[1]}-${startDateParts[0]}T00:00:00+00:00`);
+      const endDate = new Date(`${endDateParts[2]}-${endDateParts[1]}-${endDateParts[0]}T00:00:00+00:00`);
+
+      newAbsence = {
+        UserId: userId,
+        AbsenceDefinitionId: this.absenceForm.value.absenceId,
+        PartialTimeFrom: startDate.toISOString(),
+        PartialTimeTo: endDate.toISOString(),
+      };
+
+    } else {
+      console.log('Start date or end date is null or undefined');
+    }
+
+    console.log(newAbsence);
+    this.apiService.setAccessToken().then(() => {
+      this.apiService.postDataToApi('api/v1/Absences', newAbsence).subscribe((data: any) => {
+        this.absenceSuccessMessage = 'Absence added.';
+        this.absenceErrorMessage = '';
+        this.absenceInfoMessage = '';
+        console.log("success!");
+        console.log(data);
+      }, error => {
+        this.absenceErrorMessage = 'Error adding user. Please try again.';
+        this.absenceSuccessMessage = '';
+        this.absenceInfoMessage = '';
+        console.log(error);
+      });
+    });
+  }
+
   addUserHandler(): void {
     if(!this.userForm.value.name || !this.userForm.value.surname) {
-      this.errorMessage = 'First name and last name are mandatory fields.';
-      this.successMessage = '';
+      this.userErrorMessage = 'First name and last name are mandatory fields.';
+      this.userSuccessMessage = '';
       return;
     }
 
-    this.errorMessage = '';
-    this.successMessage = '';
-    this.infoMessage = 'Adding user...';
+    this.userErrorMessage = '';
+    this.userSuccessMessage = '';
+    this.userInfoMessage = 'Adding user...';
     this.addUser();
   }
 
@@ -133,15 +187,15 @@ export class UsersComponent implements OnInit {
 
     this.apiService.setAccessToken().then(() => {
       this.apiService.postDataToApi('api/v1/Users', newUser).subscribe((data: any) => {
-        this.successMessage = 'User ' + data.FirstName + ' ' + data.LastName + ' has been added.';
-        this.errorMessage = '';
-        this.infoMessage = '';
+        this.userSuccessMessage = 'User ' + data.FirstName + ' ' + data.LastName + ' has been added.';
+        this.userErrorMessage = '';
+        this.userInfoMessage = '';
         this.users = this.getData('api/v1/Users');
         this.userForm.reset();
       }, error => {
-        this.errorMessage = 'Error adding user. Please try again.';
-        this.successMessage = '';
-        this.infoMessage = '';
+        this.userErrorMessage = 'Error adding user. Please try again.';
+        this.userSuccessMessage = '';
+        this.userInfoMessage = '';
         console.log(error);
       });
     });

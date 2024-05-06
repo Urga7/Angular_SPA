@@ -12,6 +12,7 @@ body {
 }
 
 button {
+  appearance: none;
   padding: 8px;
   border-radius: 4px;
   background-color: rgba(197, 197, 197, 0.50);
@@ -29,10 +30,15 @@ select {
   padding: 8px;
   margin: 5px;
   outline: none;
+  border-radius: 0;
+  appearance: none;
+  background-color: white;
+  border: 1px solid #7a7a7a;
 }
 
 input {
   padding: 10px;
   margin: 5px;
-  outline: none;
+  appearance: none;
+  border: 1px solid #7a7a7a;
 }
