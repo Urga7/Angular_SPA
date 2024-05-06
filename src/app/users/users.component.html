@@ -32,19 +32,9 @@
         <button (click)="hideForm()">Cancel</button>
         <button type="submit">Add</button>
       </div>
-      @if(userSuccessMessage) {
-        <p class="success-msg">
-          {{ userSuccessMessage }}
-        </p>
-      }
-      @if(userErrorMessage) {
-        <p class="error-msg">
-          {{ userErrorMessage }}
-        </p>
-      }
-      @if(userInfoMessage) {
+      @if(userFeedbackMessage) {
         <p>
-          {{ userInfoMessage }}
+          {{ userFeedbackMessage }}
         </p>
       }
     </form>
@@ -79,34 +69,43 @@
               <td>{{ user.BirthDate | date: 'dd/MM/yyyy' }}</td>
               <td>{{ user.Email }}</td>
               <td>
-                <a (click)="user.absenceFormActive = !user.absenceFormActive">✚</a>
+                <a (click)="user.absenceFormActive = !user.absenceFormActive; absenceFeedbackMessage='';">✚</a>
               </td>
             </tr>
             @if(user.absenceFormActive) {
               <tr>
-                <td colspan="5" class="add-absence-container">
+                <td colspan="99">
                   <form [formGroup]="absenceForm" (ngSubmit)="addAbsenceHandler(user.Id)">
-                    <label>
-                      Select type of absence
-                      <select formControlName="absenceId">
-                        @for(absDef of absenceDefinitions; track absenceDefinitions.Id) {
-                          <option [value]="absDef.Id">
-                            {{ absDef.Name }}
-                          </option>
-                        }
-                      </select>
-                    </label>
-                    <label>
-                      Select absence start
-                      <input type="date" formControlName="startDate" />
-                    </label>
-                    <label>
-                      Select absence end
-                      <input type="date" formControlName="endDate" />
-                    </label>
-                    <button type="submit">
-                      Add absence
-                    </button>
+                    <div class="input-container">
+                      <label>
+                        Select type of absence
+                        <select formControlName="absenceId">
+                          @for(absDef of absenceDefinitions; track absenceDefinitions.Id) {
+                            <option [value]="absDef.Id">
+                              {{ absDef.Name }}
+                            </option>
+                          }
+                        </select>
+                      </label>
+                      <label>
+                        Select absence start
+                        <input type="date" formControlName="startDate" />
+                      </label>
+                      <label>
+                        Select absence end
+                        <input type="date" formControlName="endDate" />
+                      </label>
+                    </div>
+                    <div class="button-and-feedback-container">
+                      <button type="submit">
+                        Add absence
+                      </button>
+                      @if(absenceFeedbackMessage) {
+                        <div class="info-container">
+                          {{ absenceFeedbackMessage }}
+                        </div>
+                      }
+                    </div>
                   </form>
                 </td>
               </tr>

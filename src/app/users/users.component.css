@@ -79,28 +79,25 @@
               cursor: pointer;
             }
           }
+
+          form {
+            .button-and-feedback-container {
+              display: flex;
+              justify-content: center;
+              button {
+                margin: 10px;
+              }
+              .info-container {
+                display: flex;
+                align-items: center;
+              }
+            }
+          }
         }
       }
 
       tr:nth-child(even) {
         background-color: #f6f6f6;
-      }
-
-      .add-absence-container {
-        form {
-          display: flex;
-          justify-content: space-between;
-          label {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-right: 30px;
-          }
-          button {
-            padding: 4px;
-            margin: 6px;
-          }
-        }
       }
     }
   }

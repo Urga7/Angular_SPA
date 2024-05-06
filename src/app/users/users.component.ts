@@ -17,15 +17,8 @@ export class UsersComponent implements OnInit {
   nameQuery: string = '';
   surnameQuery: string = '';
   userFormActive: boolean = false;
-
-  userSuccessMessage: string = '';
-  userErrorMessage: string = '';
-  userInfoMessage: string = '';
-
-  absenceSuccessMessage: string = '';
-  absenceErrorMessage: string = '';
-  absenceInfoMessage: string = '';
-
+  userFeedbackMessage: string = '';
+  absenceFeedbackMessage: string = '';
   absenceDefinitions: any;
   fetchingUsers: boolean = false;
   fetchingAbsencesDefinitions: boolean = false;
@@ -100,9 +93,7 @@ export class UsersComponent implements OnInit {
 
   hideForm(): void {
     this.userFormActive = false;
-    this.userErrorMessage = '';
-    this.userSuccessMessage = '';
-    this.userInfoMessage = '';
+    this.userFeedbackMessage = '';
   }
 
   async getData(endpoint: string): Promise<any> {
@@ -119,46 +110,29 @@ export class UsersComponent implements OnInit {
   }
 
   addAbsenceHandler(userId: string): void {
+    if(!this.absenceForm.value.absenceId || !this.absenceForm.value.startDate || !this.absenceForm.value.endDate) {
+      this.absenceFeedbackMessage = 'Please fill all the fields.';
+      return;
+    }
+    this.absenceFeedbackMessage = 'Adding absence...';
     this.addAbsence(userId);
   }
 
   addAbsence(userId: string): void {
-    console.log("Gonna add absence..")
-    const startDateValue = this.absenceForm.value.startDate;
-    const endDateValue = this.absenceForm.value.endDate;
-    let newAbsence: any;
+    const newAbsence = {
+        "UserId": userId,
+        "AbsenceDefinitionId": this.absenceForm.value.absenceId,
+        "Timestamp": new Date().toISOString(),
+        "PartialTimeFrom": this.absenceForm.value.startDate,
+        "PartialTimeTo": this.absenceForm.value.endDate,
+    };
 
-    if (startDateValue && endDateValue) {
-      console.log("Inside IF")
-      const startDateParts = startDateValue.split('/');
-      const endDateParts = endDateValue.split('/');
-
-      const startDate = new Date(`${startDateParts[2]}-${startDateParts[1]}-${startDateParts[0]}T00:00:00+00:00`);
-      const endDate = new Date(`${endDateParts[2]}-${endDateParts[1]}-${endDateParts[0]}T00:00:00+00:00`);
-
-      newAbsence = {
-        UserId: userId,
-        AbsenceDefinitionId: this.absenceForm.value.absenceId,
-        PartialTimeFrom: startDate.toISOString(),
-        PartialTimeTo: endDate.toISOString(),
-      };
-
-    } else {
-      console.log('Start date or end date is null or undefined');
-    }
-
-    console.log(newAbsence);
     this.apiService.setAccessToken().then(() => {
       this.apiService.postDataToApi('api/v1/Absences', newAbsence).subscribe((data: any) => {
-        this.absenceSuccessMessage = 'Absence added.';
-        this.absenceErrorMessage = '';
-        this.absenceInfoMessage = '';
-        console.log("success!");
-        console.log(data);
+        this.absenceFeedbackMessage = 'Absence added.';
+        console.log(data)
       }, error => {
-        this.absenceErrorMessage = 'Error adding user. Please try again.';
-        this.absenceSuccessMessage = '';
-        this.absenceInfoMessage = '';
+        this.absenceFeedbackMessage = 'Error adding absence. Please try again.';
         console.log(error);
       });
     });
@@ -166,14 +140,11 @@ export class UsersComponent implements OnInit {
 
   addUserHandler(): void {
     if(!this.userForm.value.name || !this.userForm.value.surname) {
-      this.userErrorMessage = 'First name and last name are mandatory fields.';
-      this.userSuccessMessage = '';
+      this.userFeedbackMessage = 'First name and last name are mandatory fields.';
       return;
     }
 
-    this.userErrorMessage = '';
-    this.userSuccessMessage = '';
-    this.userInfoMessage = 'Adding user...';
+    this.userFeedbackMessage = 'Adding user...';
     this.addUser();
   }
 
@@ -187,15 +158,11 @@ export class UsersComponent implements OnInit {
 
     this.apiService.setAccessToken().then(() => {
       this.apiService.postDataToApi('api/v1/Users', newUser).subscribe((data: any) => {
-        this.userSuccessMessage = 'User ' + data.FirstName + ' ' + data.LastName + ' has been added.';
-        this.userErrorMessage = '';
-        this.userInfoMessage = '';
+        this.userFeedbackMessage = 'User ' + data.FirstName + ' ' + data.LastName + ' has been added.';
         this.users = this.getData('api/v1/Users');
         this.userForm.reset();
       }, error => {
-        this.userErrorMessage = 'Error adding user. Please try again.';
-        this.userSuccessMessage = '';
-        this.userInfoMessage = '';
+        this.userFeedbackMessage = 'Error adding user. Please try again.';
         console.log(error);
       });
     });
