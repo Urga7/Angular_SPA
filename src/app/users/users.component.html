@@ -1,6 +1,6 @@
 <div class="search-input">
-  <input type="text" placeholder="Search by First Name" (input)="search('FirstName', nameQuery)" [(ngModel)]="nameQuery">
-  <input type="text" placeholder="Search by Last Name" (input)="search('LastName', surnameQuery)" [(ngModel)]="surnameQuery">
+  <input type="text" placeholder="Search by First Name" (input)="search()" [(ngModel)]="nameQuery">
+  <input type="text" placeholder="Search by Last Name" (input)="search()" [(ngModel)]="surnameQuery">
 </div>
 
 @if(!userFormActive) {

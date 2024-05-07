@@ -85,9 +85,11 @@ export class UsersComponent implements OnInit {
     }
   }
 
-  search(column: string, query: string): void {
+  search(): void {
     this.filteredUsers = this.users.filter((user: any) => {
-      return user[column].toLowerCase().includes(query.toLowerCase());
+      const firstNameMatch = !this.nameQuery || user['FirstName'].toLowerCase().includes(this.nameQuery.toLowerCase());
+      const lastNameMatch = !this.surnameQuery || user['LastName'].toLowerCase().includes(this.surnameQuery.toLowerCase());
+      return firstNameMatch && lastNameMatch;
     });
   }
 
