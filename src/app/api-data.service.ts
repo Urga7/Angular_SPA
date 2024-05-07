@@ -7,9 +7,9 @@ import { ApiService } from "./api.service";
 export class ApiDataService {
   constructor(private apiService: ApiService) {}
 
-  async getUsers(): Promise<any> {
+  async getUsers(forceRefresh: boolean = false): Promise<any> {
     try {
-      if (localStorage.getItem('users') == 'undefined' || localStorage.getItem('users') == null) {
+      if (forceRefresh || localStorage.getItem('users') == 'undefined' || localStorage.getItem('users') == null) {
         const userData = await this.apiService.getData('api/v1/Users');
         localStorage.setItem('users', JSON.stringify(userData));
       }
@@ -20,9 +20,9 @@ export class ApiDataService {
     }
   }
 
-  async getAbsenceDefinitions(): Promise<any> {
+  async getAbsenceDefinitions(forceRefresh: boolean = false): Promise<any> {
     try {
-      if (localStorage.getItem('absenceDefinitions') == 'undefined' || localStorage.getItem('absenceDefinitions') == null) {
+      if (forceRefresh || localStorage.getItem('absenceDefinitions') == 'undefined' || localStorage.getItem('absenceDefinitions') == null) {
         const absenceDef = await this.apiService.getData('api/v1/AbsenceDefinitions');
         localStorage.setItem('absenceDefinitions', JSON.stringify(absenceDef));
       }
@@ -33,7 +33,7 @@ export class ApiDataService {
     }
   }
 
-  async getAbsences(forceRefresh: boolean): Promise<any> {
+  async getAbsences(forceRefresh: boolean = false): Promise<any> {
     try {
       if (forceRefresh || localStorage.getItem('absences') == 'undefined' || localStorage.getItem('absences') == null) {
         const absences = await this.apiService.getData('api/v1/Absences');

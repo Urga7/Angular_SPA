@@ -31,13 +31,5 @@
       text-align: center;
       margin-top: 20px;
     }
-
-    .success-msg {
-      color: green;
-    }
-
-    .error-msg {
-      color: red;
-    }
   }
 }

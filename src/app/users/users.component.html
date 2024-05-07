@@ -1,61 +1,61 @@
-<div class="search-input">
-  <label>
-    Search by First Name:
-    <input type="text" placeholder="Janez" (input)="search()" [(ngModel)]="nameQuery">
-  </label>
-  <label>
-    Search by Last Name:
-    <input type="text" placeholder="Novak" (input)="search()" [(ngModel)]="surnameQuery">
-  </label>
-</div>
-
-@if(!userFormActive) {
-  <div class="button-container">
-    <button (click)="this.userFormActive = true">Add new user</button>
+@if(apiService.areCredentialsSet()) {
+  <div class="search-input">
+    <label>
+      Search by First Name:
+      <input type="text" placeholder="Janez" (input)="search()" [(ngModel)]="nameQuery">
+    </label>
+    <label>
+      Search by Last Name:
+      <input type="text" placeholder="Novak" (input)="search()" [(ngModel)]="surnameQuery">
+    </label>
   </div>
-}
 
-@if(userFormActive) {
-  <div class="add-user-container">
-    <form [formGroup]="userForm" (ngSubmit)="addUserHandler()">
-      <label>
-        First name:
-        <input type="text" placeholder="Janez" formControlName="name" />
-      </label>
-      <label>
-        Last name:
-        <input type="text" placeholder="Novak" formControlName="surname" />
-      </label>
-      <label>
-        Birth date:
-        <input type="date" formControlName="birthday" />
-      </label>
-      <label>
-        Email:
-        <input type="email" placeholder="janez.novak@email.com" formControlName="email" />
-      </label>
-      <div class="button-container">
-        <button (click)="userFormActive = false; userFeedbackMessage = '';">Cancel</button>
-        <button type="submit">Add</button>
-      </div>
-      @if(userFeedbackMessage) {
-        <p>
-          {{ userFeedbackMessage }}
-        </p>
-      }
-    </form>
-  </div>
-}
+  @if(!userFormActive) {
+    <div class="button-container">
+      <button (click)="this.userFormActive = true">Add new user</button>
+    </div>
+  }
 
-@if(fetchingUsers || fetchingAbsencesDefinitions) {
-  <div class="info-container">
-    <p>
-      Fetching users...
-    </p>
-  </div>
-}
+  @if(userFormActive) {
+    <div class="add-user-container">
+      <form [formGroup]="userForm" (ngSubmit)="addUserHandler()">
+        <label>
+          First name:
+          <input type="text" placeholder="Janez" formControlName="name" />
+        </label>
+        <label>
+          Last name:
+          <input type="text" placeholder="Novak" formControlName="surname" />
+        </label>
+        <label>
+          Birth date:
+          <input type="date" formControlName="birthday" />
+        </label>
+        <label>
+          Email:
+          <input type="email" placeholder="janez.novak@email.com" formControlName="email" />
+        </label>
+        <div class="button-container">
+          <button (click)="userFormActive = false; userFeedbackMessage = '';">Cancel</button>
+          <button type="submit">Add</button>
+        </div>
+        @if(userFeedbackMessage) {
+          <p>
+            {{ userFeedbackMessage }}
+          </p>
+        }
+      </form>
+    </div>
+  }
 
-@if(!fetchingUsers && !fetchingAbsencesDefinitions) {
+  @if(fetchingUsers) {
+    <div class="info-container">
+      <p>
+        Fetching users...
+      </p>
+    </div>
+  }
+
   @if(filteredUsers.length > 0) {
     <div class="data-container">
       <table>
@@ -65,6 +65,11 @@
           <th>Last name</th>
           <th>Birth date</th>
           <th>Email</th>
+          <th>
+            <div class="button-container" (click)="refreshUsers()">
+              <img src="assets/refresh.svg" alt="Refresh">
+            </div>
+          </th>
         </tr>
         </thead>
         <tbody>
@@ -78,10 +83,10 @@
                 <a (click)="user.absenceFormActive = !user.absenceFormActive; absenceFeedbackMessage='';">✚</a>
               </td>
             </tr>
-            @if(user.absenceFormActive) {
+            @if(user.absenceFormActive && !fetchingAbsencesDefinitions) {
               <tr>
                 <td colspan="99">
-                  <form [formGroup]="absenceForm" (ngSubmit)="addAbsenceHandler(user.Id)">
+                  <form [formGroup]="absenceForm" (ngSubmit)="addAbsenceHandler(user)">
                     <div class="input-container">
                       <label>
                         Select type of absence
@@ -106,9 +111,9 @@
                       <button type="submit">
                         Add absence
                       </button>
-                      @if(absenceFeedbackMessage) {
+                      @if(user.absenceFeedbackMessage) {
                         <div class="info-container">
-                          {{ absenceFeedbackMessage }}
+                          {{ user.absenceFeedbackMessage }}
                         </div>
                       }
                     </div>
@@ -121,7 +126,7 @@
     </div>
   }
 
-  @if(users.length == 0) {
+  @if(users.length == 0 && !fetchingUsers) {
     <div class="info-container">
       <p>
         No users found.
@@ -137,4 +142,18 @@
     </div>
   }
 }
+
+@if(!apiService.areCredentialsSet()) {
+  <div class="info-container">
+    <p>
+      Credentials must be set in order to see the list of users.
+    </p>
+  </div>
+  <div class="button-container">
+    <button routerLink="/settings" routerLinkActive="active">Set credentials</button>
+  </div>
+  <router-outlet />
+}
+
+
 

@@ -13,17 +13,25 @@ import { ApiService } from "../api.service";
 export class SettingsComponent implements OnInit {
   client_id: string = '';
   client_secret: string = '';
-  credentialsSaved: boolean = false;
+  feedbackMsg: string = '';
 
-  constructor(private apiService: ApiService) {}
+  constructor(public apiService: ApiService) {}
 
   ngOnInit(): void {
     this.client_id = localStorage.getItem('client_id') ?? '';
     this.client_secret = localStorage.getItem('client_secret') ?? '';
   }
 
-  saveCredentials(): void {
-    this.apiService.setCredentials(this.client_id, this.client_secret);
-    this.credentialsSaved = true;
+  async saveCredentials(): Promise<void> {
+    if(!this.client_id || !this.client_secret) {
+      this.feedbackMsg = 'Please fill out both fields.';
+      return;
+    }
+    try {
+      await this.apiService.setCredentials(this.client_id, this.client_secret);
+      this.feedbackMsg = 'Credentials saved.'
+    } catch (e: any) {
+      this.feedbackMsg = 'Id or password incorrect. Try again.';
+    }
   }
 }

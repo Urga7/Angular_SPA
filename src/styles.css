@@ -114,3 +114,12 @@ input {
   display: flex;
   justify-content: center;
 }
+
+
+.success-msg {
+  color: green;
+}
+
+.error-msg {
+  color: red;
+}
