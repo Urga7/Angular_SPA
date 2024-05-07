@@ -1,6 +1,12 @@
 <div class="search-input">
-  <input type="text" placeholder="Search by First Name" (input)="search()" [(ngModel)]="nameQuery">
-  <input type="text" placeholder="Search by Last Name" (input)="search()" [(ngModel)]="surnameQuery">
+  <label>
+    Search by First Name:
+    <input type="text" placeholder="Janez" (input)="search()" [(ngModel)]="nameQuery">
+  </label>
+  <label>
+    Search by Last Name:
+    <input type="text" placeholder="Novak" (input)="search()" [(ngModel)]="surnameQuery">
+  </label>
 </div>
 
 @if(!userFormActive) {
@@ -14,11 +20,11 @@
     <form [formGroup]="userForm" (ngSubmit)="addUserHandler()">
       <label>
         First name:
-        <input type="text" placeholder="Mark" formControlName="name" />
+        <input type="text" placeholder="Janez" formControlName="name" />
       </label>
       <label>
         Last name:
-        <input type="text" placeholder="Watson" formControlName="surname" />
+        <input type="text" placeholder="Novak" formControlName="surname" />
       </label>
       <label>
         Birth date:
@@ -26,10 +32,10 @@
       </label>
       <label>
         Email:
-        <input type="email" placeholder="mark.watson@email.com" formControlName="email" />
+        <input type="email" placeholder="janez.novak@email.com" formControlName="email" />
       </label>
       <div class="button-container">
-        <button (click)="hideForm()">Cancel</button>
+        <button (click)="userFormActive = false; userFeedbackMessage = '';">Cancel</button>
         <button type="submit">Add</button>
       </div>
       @if(userFeedbackMessage) {
@@ -51,7 +57,7 @@
 
 @if(!fetchingUsers && !fetchingAbsencesDefinitions) {
   @if(filteredUsers.length > 0) {
-    <div class="users-container">
+    <div class="data-container">
       <table>
         <thead>
         <tr>

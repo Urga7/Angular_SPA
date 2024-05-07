@@ -1,1 +1,60 @@
-<p>absences works!</p>
+<div class="search-input">
+  <label>
+    Select day of absence:
+    <input type="date" (input)="findAbsencesOnDay()" [(ngModel)]="absenceDay">
+  </label>
+</div>
+
+<div class="button-container">
+  <button (click)="refreshAbsences()">Fetch newest absences</button>
+</div>
+
+@if(infoMessage) {
+  <div class="info-container">
+    <p>
+      {{ infoMessage }}
+    </p>
+  </div>
+}
+
+@if(filteredAbsences.length > 0) {
+  <div class="data-container">
+    <table>
+      <thead>
+      <tr>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Absence Type</th>
+        <th>Date From</th>
+        <th>Date To</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for(absence of filteredAbsences; track absence.Id) {
+          <tr>
+            <td>{{ absence.FirstName }}</td>
+            <td>{{ absence.LastName }}</td>
+            <td>{{ absence.AbsenceDefinitionName }}</td>
+            <td>{{ absence.PartialTimeFrom | date: 'dd/MM/yyyy' }}</td>
+            <td>{{ absence.PartialTimeTo | date: 'dd/MM/yyyy' }}</td>
+          </tr>
+        }
+    </table>
+  </div>
+}
+
+@if(absences.length == 0) {
+  <div class="info-container">
+    <p>
+      No absences found.
+    </p>
+  </div>
+}
+
+@if(absences.length > 0 && filteredAbsences.length == 0) {
+  <div class="info-container">
+    <p>
+      No absences found on day {{ absenceDay | date: 'dd/MM/yyyy' }}.
+    </p>
+  </div>
+}

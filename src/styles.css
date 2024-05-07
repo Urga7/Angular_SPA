@@ -42,3 +42,75 @@ input {
   appearance: none;
   border: 1px solid #7a7a7a;
 }
+
+.data-container {
+  margin: 40px;
+  display: flex;
+  justify-content: center;
+
+  table {
+    border-collapse: collapse;
+    thead {
+      tr {
+        border-bottom: 1px solid #333;
+      }
+    }
+    tbody {
+      tr {
+        border-bottom: 1px solid lightgray;
+        border-left: 1px solid #efefef;
+        border-right: 1px solid #efefef;
+        td {
+          padding: 0 10px;
+
+          a {
+            color: #333;
+            &:hover {
+              cursor: pointer;
+            }
+          }
+
+          form {
+            .button-and-feedback-container {
+              display: flex;
+              justify-content: center;
+              button {
+                margin: 10px;
+              }
+              .info-container {
+                display: flex;
+                align-items: center;
+              }
+            }
+          }
+        }
+      }
+
+      tr:nth-child(even) {
+        background-color: #f6f6f6;
+      }
+    }
+  }
+}
+
+.search-input {
+  margin: 40px;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info-container {
+  display: flex;
+  justify-content: center;
+
+  p {
+    margin-top: 30px;
+  }
+}
+
+.button-container {
+  display: flex;
+  justify-content: center;
+}

@@ -55,4 +55,17 @@ export class ApiService {
 
     return this.http.post<any>(`${this.apiUrl}/${endpoint}`, data, { headers });
   }
+
+  async getData(endpoint: string): Promise<any> {
+    try {
+      await this.setAccessToken();
+      if (this.accessToken) {
+        return this.fetchDataFromApi(endpoint).toPromise();
+      } else {
+        console.error('Access token is not set.');
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }
 }
