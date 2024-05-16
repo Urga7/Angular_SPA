@@ -27,6 +27,7 @@ export class SettingsComponent implements OnInit {
       this.feedbackMsg = 'Please fill out both fields.';
       return;
     }
+
     try {
       await this.apiService.setCredentials(this.client_id, this.client_secret);
       this.feedbackMsg = 'Credentials saved.'

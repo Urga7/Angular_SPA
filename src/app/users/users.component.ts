@@ -74,6 +74,7 @@ export class UsersComponent implements OnInit {
       user.absenceFeedbackMessage = 'Please fill out all the fields.';
       return;
     }
+
     user.absenceFeedbackMessage = 'Adding absence...';
     this.addAbsence(user);
   }
@@ -88,11 +89,14 @@ export class UsersComponent implements OnInit {
     };
 
     this.apiService.setAccessToken().then(() => {
-      this.apiService.postDataToApi('api/v1/Absences', newAbsence).subscribe(() => {
-        user.absenceFeedbackMessage = 'Absence added.';
-      }, error => {
-        user.absenceFeedbackMessage = 'Error adding absence. Please try again.';
-        console.log(error);
+      this.apiService.postDataToApi('api/v1/Absences', newAbsence).subscribe({
+        error: (err) => {
+          user.absenceFeedbackMessage = 'Error adding absence. Please try again.';
+          console.log(err);
+        },
+        complete: () => {
+          user.absenceFeedbackMessage = 'Absence added.';
+        }
       });
     });
   }
@@ -121,12 +125,17 @@ export class UsersComponent implements OnInit {
     };
 
     this.apiService.setAccessToken().then(() => {
-      this.apiService.postDataToApi('api/v1/Users', newUser).subscribe(async (data: any) => {
-        this.users.push(data);
-        this.userFeedbackMessage = 'User ' + data.FirstName + ' ' + data.LastName + ' has been added.';
-        this.userForm.reset();
-      }, error => {
-        this.userFeedbackMessage = error.error.error;
+      this.apiService.postDataToApi('api/v1/Users', newUser).subscribe({
+        next: (data: any) => {
+          this.users.push(data);
+          this.userFeedbackMessage = 'User ' + data.FirstName + ' ' + data.LastName + ' has been added.';
+        },
+        error: (err) => {
+          this.userFeedbackMessage = err.error.error;
+        },
+        complete: () => {
+          this.userForm.reset();
+        }
       });
     });
   }

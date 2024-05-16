@@ -39,7 +39,7 @@ export class AbsencesComponent implements OnInit {
   findAbsencesOnDay(): void {
     this.infoMessage = '';
     this.filteredAbsences = this.absences.filter((absence: any) => {
-      return  absence.PartialTimeFrom <= this.absenceDay && absence.PartialTimeTo >= this.absenceDay;
+      return absence.PartialTimeFrom <= this.absenceDay && absence.PartialTimeTo >= this.absenceDay;
     });
   }
 

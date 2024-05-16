@@ -2,14 +2,15 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Data } from "@angular/router";
+import { lastValueFrom } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class ApiService {
-  private readonly apiUrl = 'https://api4.allhours.com';
-  private readonly tokenUrl = 'https://login.allhours.com/connect/token';
+  private readonly apiUrl: string = 'https://api4.allhours.com';
+  private readonly tokenUrl: string = 'https://login.allhours.com/connect/token';
   accessToken: string = '';
 
   constructor(private http: HttpClient) {}
@@ -22,11 +23,12 @@ export class ApiService {
     body.set('scope', 'api');
 
     try {
-      const response = await this.http.post<any>(this.tokenUrl, body.toString(), {
+      const response$ = this.http.post<any>(this.tokenUrl, body.toString(), {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-      }).toPromise();
+      });
 
-      if(response.access_token) {
+      const token = await lastValueFrom(response$);
+      if(token.access_token) {
         localStorage.setItem('client_id', client_id);
         localStorage.setItem('client_secret', client_secret);
       }
@@ -45,11 +47,12 @@ export class ApiService {
     body.set('client_secret', localStorage.getItem('client_secret') ?? '');
     body.set('scope', 'api');
     try {
-      const response = await this.http.post<any>(this.tokenUrl, body.toString(), {
+      const response$ = this.http.post<any>(this.tokenUrl, body.toString(), {
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-      }).toPromise();
+      });
 
-      this.accessToken = response.access_token;
+      const token = await lastValueFrom(response$);
+      this.accessToken = token.access_token;
     } catch(error) {
       console.error("Error getting access token: ", error);
       throw error;
@@ -78,7 +81,8 @@ export class ApiService {
     try {
       await this.setAccessToken();
       if (this.accessToken) {
-        return this.fetchDataFromApi(endpoint).toPromise();
+        const data$ = this.fetchDataFromApi(endpoint)
+        return await lastValueFrom(data$);
       } else {
         console.error('Access token is not set.');
       }
