@@ -1,5 +1,8 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+# Specific files
+Authentication_testna_naloga.pdf
+
 # Compiled output
 /dist
 /tmp
