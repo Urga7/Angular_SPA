@@ -6,7 +6,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 ### Prerequisites
 In order to run the app, you'll need to have the following installed on your computer:
 1. [Node.js](https://nodejs.org/en)
-2. The Angular CLI. From the terminal, install the Angular CLI globally with: `npm install -g @angular/cli` \
+2. The Angular CLI. From the terminal, install the Angular CLI globally with: `npm install -g @angular/cli` 
 
 You can run `npm --version` and `ng version` to check if you have these installed already.
 
