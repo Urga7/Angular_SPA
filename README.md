@@ -16,9 +16,9 @@ Once the prerequisites are met, you can follow these steps to run the app.
 2. Run `cd Angular_SPA`.
 3. Type `npm install`.
 4. Run the application locally with `ng serve`.
-5. In your browser of choice, navigate to `http://localhost:4200/`. \
+5. In your browser of choice, navigate to `http://localhost:4200/`.
 
-If the default port 4200 is not available, you can specify another port with the port flag, for example: `ng serve --port 4201`. \
-To stop the app, press `Ctrl` + `c` in the termial. \
+If the default port 4200 is not available, you can specify another port with the port flag, for example:
+`ng serve --port 4201`. To stop the app, press `Ctrl` + `c` in the termial.
 
 If you don't have `git` installed, you can't download the zip file manually from `https://github.com/Urga7/Angular_SPA`, extract the contents and open the termial in that folder. From there continue with step 3.
